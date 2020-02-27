@@ -6,13 +6,114 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <Button
+        android:id="@+id/uploadToServerBtn"
+        android:layout_width="163dp"
+        android:layout_height="41dp"
+        android:layout_marginTop="49dp"
+        android:layout_marginEnd="124dp"
+        android:layout_marginRight="124dp"
+        android:layout_marginBottom="40dp"
+        android:text="Upload to Server"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scrollView2"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/userMessageInput"
+        android:layout_width="251dp"
+        android:layout_height="31dp"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textMultiLine"
+        tools:layout_editor_absoluteX="124dp"
+        tools:layout_editor_absoluteY="156dp" />
+
     <TextView
+        android:id="@+id/userMessageLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="Message"
+        tools:layout_editor_absoluteX="42dp"
+        tools:layout_editor_absoluteY="156dp" />
+
+    <TextView
+        android:id="@+id/serverResponseLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Response"
+        tools:layout_editor_absoluteX="40dp"
+        tools:layout_editor_absoluteY="211dp" />
+
+    <TextView
+        android:id="@+id/serverResponse"
+        android:layout_width="250dp"
+        android:layout_height="25dp"
+        tools:layout_editor_absoluteX="125dp"
+        tools:layout_editor_absoluteY="213dp" />
+
+    <Button
+        android:id="@+id/sendMessageBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send Message"
+        tools:layout_editor_absoluteX="69dp"
+        tools:layout_editor_absoluteY="264dp" />
+
+    <Button
+        android:id="@+id/saveResponseBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save response"
+        tools:layout_editor_absoluteX="208dp"
+        tools:layout_editor_absoluteY="264dp" />
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="409dp"
+        android:layout_height="248dp"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="357dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sample file entry" />
+        </LinearLayout>
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/serverInformationLabel"
+        android:layout_width="336dp"
+        android:layout_height="32dp"
+        android:text="Server Info"
+        tools:layout_editor_absoluteX="39dp"
+        tools:layout_editor_absoluteY="105dp" />
+
+    <Button
+        android:id="@+id/connectServerBtn"
+        android:layout_width="163dp"
+        android:layout_height="36dp"
+        android:text="Connect"
+        tools:layout_editor_absoluteX="40dp"
+        tools:layout_editor_absoluteY="56dp" />
+
+    <Button
+        android:id="@+id/disconnectServerBtn"
+        android:layout_width="163dp"
+        android:layout_height="36dp"
+        android:text="Disconnect"
+        tools:layout_editor_absoluteX="208dp"
+        tools:layout_editor_absoluteY="56dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
