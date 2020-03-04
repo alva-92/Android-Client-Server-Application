@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jcraft.jsch.Channel;
@@ -20,19 +19,23 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
 
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
+    /** Class logging TAG */
+    private static final String TAG        = "MainActivity";
     static final String USER_MESSAGE_STATE = "userMessageState";
 
     private EditText userMessage;
     private Button uploadToServer;
 
     private File appDirectory;
+    /** Username to be used to connect to the AWS instance */
+    private String userName = "ec2-user";
     final static String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/DroidClient/";
 
     @Override
@@ -48,8 +51,10 @@ public class MainActivity extends AppCompatActivity {
         /* Recover the instance state */
         if (savedInstanceState != null) {
             /* Reload the app */
+            Log.d(TAG, "onCreate: Restoring state");
             userMessage.setText(savedInstanceState.getString(USER_MESSAGE_STATE));
         } else {
+            Log.d(TAG, "onCreate: New activity");
             setContentView(R.layout.activity_main);
         }
 
@@ -64,38 +69,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: Attempting to upload files to Server");
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        boolean conStatus = false;
-                        Session session = null;
-                        Channel channel = null;
-                        java.util.Properties config = new java.util.Properties();
-                        config.put("StrictHostKeyChecking", "no");
-                        try {
-                            JSch ssh = new JSch();
-                            ssh.addIdentity(filePath + "open-dev.pem");
-                            session = ssh.getSession("ec2-user", "3.15.207.215", 22);
-                            session.setConfig(config);
-                            session.connect();
-                            conStatus = session.isConnected();
-                            Log.i("Session","is"+conStatus);
-                            channel = session.openChannel("sftp");
-                            channel.connect();
-                            ChannelSftp sftp = (ChannelSftp) channel;
-                            sftp.put(filePath + "Sample.txt", "/home/ec2-user/");
-                        } catch (JSchException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                            Log.i("Session","is"+conStatus);
-                        } catch (SftpException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                            Log.i("Session","is"+conStatus);
-                        }
-                    }
-                });
-                thread.start();
+                sftpFileUpload();
             }
         });
     }
@@ -128,6 +102,50 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    public void sftpFileUpload(){
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Session session;
+                Channel channel;
+                java.util.Properties config = new java.util.Properties();
+                config.put("StrictHostKeyChecking", "no");
+                try {
+                    JSch ssh = new JSch();
+                    ssh.addIdentity(filePath + "open-dev.pem");
+                    session = ssh.getSession(userName, "3.15.207.215", 22);
+                    session.setConfig(config);
+                    session.connect();
+                    channel = session.openChannel("sftp");
+                    channel.connect();
+                    ChannelSftp sftp = (ChannelSftp) channel;
+                    SftpATTRS attrs = null;
+
+                    try {
+                        /* Check if the destination directory exists */
+                        attrs = sftp.stat("./Android-Files");
+                    } catch (Exception e) {
+                        System.out.println(sftp.pwd() + "/Android-Files not found");
+                    }
+
+                    if (attrs != null) {
+                        Log.d(TAG, "run: Destination directory exist: "+ attrs.isDir());
+                    } else {
+                        Log.d(TAG, "run: Creating Destination directory");
+                        sftp.mkdir("./Android-Files");
+                    }
+
+                    sftp.put(filePath + "Sample.txt", "/home/ec2-user/Android-Files");
+                } catch (JSchException e) {
+                    e.printStackTrace();
+                } catch (SftpException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
     }
 
     /**
@@ -197,17 +215,17 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
-                Log.v(TAG,"Permission is granted1");
+                Log.v(TAG,"Read Permission is granted");
                 return true;
             } else {
 
-                Log.v(TAG,"Permission is revoked1");
+                Log.v(TAG,"Read Permission is revoked");
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 3);
                 return false;
             }
         }
         else { //permission is automatically granted on sdk<23 upon installation
-            Log.v(TAG,"Permission is granted1");
+            Log.v(TAG,"Read Permission is granted");
             return true;
         }
     }
@@ -216,11 +234,11 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
-                Log.v(TAG,"Permission is granted2");
+                Log.v(TAG,"Write Permission is granted");
                 return true;
             } else {
 
-                Log.v(TAG,"Permission is revoked2");
+                Log.v(TAG,"Write Permission is revoked");
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
                 return false;
             }
