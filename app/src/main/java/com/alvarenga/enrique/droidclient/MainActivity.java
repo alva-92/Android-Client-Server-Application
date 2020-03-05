@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,7 +23,13 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,9 +37,17 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG        = "MainActivity";
     static final String USER_MESSAGE_STATE = "userMessageState";
 
+    public static final int SERVER_PORT = 5000;
+    public static final String SERVER_IP = "3.15.207.215";
+
+    private Socket socket;
+    private BufferedReader input;
+    private Handler handler;
+    private Thread thread;
+
     private EditText userMessage;
     private Button uploadToServer;
-
+    private Button sendMessageToServer;
     private File appDirectory;
     /** Username to be used to connect to the AWS instance */
     private String userName = "ec2-user";
@@ -62,6 +77,15 @@ public class MainActivity extends AppCompatActivity {
         isWriteStoragePermissionGranted();
         isReadStoragePermissionGranted();
 
+        sendMessageToServer = findViewById(R.id.sendMessageBtn);
+        sendMessageToServer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: Sending message to server");
+                sendMessage("Test message");
+            }
+        });
+
         /* Initialize components */
         userMessage = findViewById(R.id.userMessageInput);
         uploadToServer = findViewById(R.id.uploadToServerBtn);
@@ -72,6 +96,56 @@ public class MainActivity extends AppCompatActivity {
                 sftpFileUpload();
             }
         });
+
+    }
+
+    public void sendMessage(final String message) {
+        Log.d(TAG, "sendMessage: Sending message to server");
+        new Thread(new Runnable(){
+
+            @Override
+            public void run() {
+                try {
+
+                    socket = new Socket(SERVER_IP, SERVER_PORT);
+
+                    DataOutputStream printwriter = new DataOutputStream(socket.getOutputStream());
+                    printwriter.writeUTF("Test message");
+                    printwriter.flush();
+
+                    DataInputStream din=new DataInputStream(socket.getInputStream());
+                    String str = din.readUTF();
+                    din.close();
+                    printwriter.close();
+
+                    Log.d(TAG, "run: Response: " + str);
+
+                    if (socket.isConnected()) {
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            public void run() {
+                                /* Update UI */
+                            }
+                        });
+                    }
+                }
+                catch (UnknownHostException e2){
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        public void run() {
+                            /* Update UI with error */
+                        }
+                    });
+
+                }
+                catch (IOException e1) {
+                    Log.d("socket", "IOException: " + e1.toString());
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        public void run() {
+                            /* Update UI with error */
+                        }
+                    });
+                }
+            }
+        }).start();
     }
 
     @Override
@@ -191,10 +265,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "External storage2");
                 if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
                     Log.v(TAG,"Permission: "+permissions[0]+ "was "+grantResults[0]);
-                    //resume tasks needing this permission
-
                 }else{
-                    // Do nothing
+                    /* Alert that permission is not granted */
                 }
                 break;
 
@@ -202,10 +274,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "External storage1");
                 if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
                     Log.v(TAG,"Permission: "+permissions[0]+ "was "+grantResults[0]);
-                    //resume tasks needing this permission
-
                 }else{
-                    // Do nothing
+                    /* Alert that permission is not granted */
                 }
                 break;
         }
@@ -224,7 +294,8 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         }
-        else { //permission is automatically granted on sdk<23 upon installation
+        else {
+            /* Permission is automatically granted on sdk<23 upon installation */
             Log.v(TAG,"Read Permission is granted");
             return true;
         }
@@ -243,7 +314,8 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         }
-        else { //permission is automatically granted on sdk<23 upon installation
+        else {
+            /* Permission is automatically granted on sdk<23 upon installation */
             Log.v(TAG,"Permission is granted2");
             return true;
         }
