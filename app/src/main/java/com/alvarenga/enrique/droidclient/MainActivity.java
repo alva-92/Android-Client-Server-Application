@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jcraft.jsch.Channel;
@@ -37,21 +38,28 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG        = "MainActivity";
     static final String USER_MESSAGE_STATE = "userMessageState";
 
+        /* Server configuration */
+
+    /** Port where the server is listening */
     public static final int SERVER_PORT = 5000;
+    /** Server IP address */
     public static final String SERVER_IP = "3.15.207.215";
-
-    private Socket socket;
-    private BufferedReader input;
-    private Handler handler;
-    private Thread thread;
-
-    private EditText userMessage;
-    private Button uploadToServer;
-    private Button sendMessageToServer;
-    private File appDirectory;
     /** Username to be used to connect to the AWS instance */
     private String userName = "ec2-user";
+
+    private Socket socket;
+    private File appDirectory;
+
     final static String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/DroidClient/";
+
+        /* UI Components */
+    /** Input field for the user to send a message to the server */
+    private EditText userMessage;
+    /** Response field where the response coming from the server is displayed */
+    private TextView serverResponse;
+
+    private Button uploadToServer;
+    private Button sendMessageToServer;
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -82,12 +90,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: Sending message to server");
-                sendMessage("Test message");
+                sendMessage(userMessage.getText().toString());
             }
         });
 
         /* Initialize components */
         userMessage = findViewById(R.id.userMessageInput);
+        serverResponse = findViewById(R.id.serverResponse);
+
         uploadToServer = findViewById(R.id.uploadToServerBtn);
         uploadToServer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,37 +120,38 @@ public class MainActivity extends AppCompatActivity {
                     socket = new Socket(SERVER_IP, SERVER_PORT);
 
                     DataOutputStream printwriter = new DataOutputStream(socket.getOutputStream());
-                    printwriter.writeUTF("Test message");
+                    printwriter.writeUTF(message);
                     printwriter.flush();
 
                     DataInputStream din=new DataInputStream(socket.getInputStream());
-                    String str = din.readUTF();
+                    final String str = din.readUTF();
                     din.close();
                     printwriter.close();
-
-                    Log.d(TAG, "run: Response: " + str);
 
                     if (socket.isConnected()) {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
                                 /* Update UI */
+                                serverResponse.setText(str);
                             }
                         });
                     }
                 }
-                catch (UnknownHostException e2){
+                catch (final UnknownHostException e2){
                     MainActivity.this.runOnUiThread(new Runnable() {
                         public void run() {
                             /* Update UI with error */
+                            serverResponse.setText(e2.toString());
                         }
                     });
 
                 }
-                catch (IOException e1) {
+                catch (final IOException e1) {
                     Log.d("socket", "IOException: " + e1.toString());
                     MainActivity.this.runOnUiThread(new Runnable() {
                         public void run() {
                             /* Update UI with error */
+                            serverResponse.setText(e1.toString());
                         }
                     });
                 }
