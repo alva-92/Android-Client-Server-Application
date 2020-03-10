@@ -8,86 +8,109 @@
 
     <Button
         android:id="@+id/uploadToServerBtn"
-        android:layout_width="340dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="50dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
         android:layout_marginBottom="40dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
         android:gravity="center"
         android:textAlignment="center"
         android:text="Upload to Server"
+        app:layout_constraintStart_toStartOf="@+id/sendMessageBtn"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="@id/sendMessageBtn"
-        app:layout_constraintEnd_toEndOf="@id/saveResponseBtn"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scrollView2"/>
 
     <EditText
         android:id="@+id/userMessageInput"
-        android:layout_width="255dp"
-        android:layout_height="35dp"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/userMessageLabel"
         app:layout_constraintTop_toBottomOf="@+id/serverInformationLabel" />
 
     <TextView
         android:id="@+id/userMessageLabel"
-        android:layout_width="70dp"
-        android:layout_height="35dp"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
         android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:textAlignment="center"
         android:text="Message"
         app:layout_constraintStart_toStartOf="@+id/serverInformationLabel"
         app:layout_constraintTop_toBottomOf="@+id/serverInformationLabel"/>
 
     <TextView
         android:id="@+id/serverResponseLabel"
-        android:layout_width="70dp"
-        android:layout_height="32dp"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="10dp"
         android:layout_marginRight="10dp"
+        android:gravity="center"
+        android:textAlignment="center"
         android:text="Response"
         app:layout_constraintStart_toStartOf="@+id/userMessageLabel"
         app:layout_constraintTop_toBottomOf="@+id/userMessageLabel" />
 
     <TextView
         android:id="@+id/serverResponse"
-        android:layout_width="255dp"
-        android:layout_height="35dp"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
         android:layout_marginTop="20dp"
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userMessageInput"
         app:layout_constraintStart_toEndOf="@id/serverResponseLabel"/>
 
     <Button
         android:id="@+id/sendMessageBtn"
-        android:layout_width="165dp"
-        android:layout_height="35dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="Send Message"
         app:layout_constraintStart_toStartOf="@id/serverResponseLabel"
+        app:layout_constraintEnd_toStartOf="@+id/saveResponseBtn"
         app:layout_constraintTop_toBottomOf="@id/serverResponseLabel"/>
 
     <Button
         android:id="@+id/saveResponseBtn"
-        android:layout_width="165dp"
-        android:layout_height="35dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
         android:text="Save response"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/sendMessageBtn"
         app:layout_constraintTop_toBottomOf="@id/serverResponseLabel" />
 
     <ScrollView
         android:id="@+id/scrollView2"
-        android:layout_width="409dp"
-        android:layout_height="248dp"
-        android:layout_marginTop="50dp"
+        android:layout_width="0dp"
+        android:layout_height="175dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sendMessageBtn"
         app:layout_constraintBottom_toTopOf="@id/uploadToServerBtn"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="@+id/sendMessageBtn">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -104,31 +127,39 @@
 
     <TextView
         android:id="@+id/serverInformationLabel"
-        android:layout_width="340dp"
-        android:layout_height="35dp"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
         android:layout_marginTop="20dp"
         android:text="Server Info"
+        android:gravity="center"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/connectServerBtn"
         app:layout_constraintStart_toStartOf="@+id/connectServerBtn"/>
 
     <Button
         android:id="@+id/connectServerBtn"
-        android:layout_width="165dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="40dp"
         android:text="Connect"
-        app:layout_constraintEnd_toStartOf="@+id/disconnectServerBtn"
+        app:layout_constraintEnd_toStartOf="@id/disconnectServerBtn"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
     <Button
         android:id="@+id/disconnectServerBtn"
-        android:layout_width="165dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="50dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
         android:text="Disconnect"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@id/connectServerBtn"/>
